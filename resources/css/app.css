@@ -1,3 +1,9 @@
+@import "loader.css";
+@import "animate.css";
+
+@import "pace-js/themes/blue/pace-theme-minimal.css";
+@import "pace.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
