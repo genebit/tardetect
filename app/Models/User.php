@@ -14,7 +14,7 @@ class User extends Authenticatable implements JWTSubject
     use HasFactory, Notifiable;
 
     protected $primaryKey = 'user_id';
-    protected $table = 'user';
+    protected $table = 'user_account';
 
     /**
      * The attributes that are mass assignable.
@@ -55,11 +55,5 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
-    }
-
-    public function products(): BelongsToMany
-    {
-        return $this->belongsToMany(Product::class, 'user_product', 'user_id', 'product_id')
-            ->withTimestamps();
     }
 }

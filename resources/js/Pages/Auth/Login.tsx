@@ -16,6 +16,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
+import TextField from "@mui/material/TextField";
 
 export default function Login() {
   const formData = {
@@ -54,66 +55,50 @@ export default function Login() {
     <GuestRoute>
       <GuestLayout>
         <Head title="Login" />
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Card className="z-10 w-full max-w-sm shadow-2xl shadow-slate-300 dark:shadow-black">
+        <form onSubmit={handleSubmit}>
+          <Card className="z-10 h-screen max-w-xl px-20 rounded-tl-none rounded-bl-none shadow-2xl rounded-tr-3xl rounded-br-3xl dark:shadow-black">
             <CardHeader>
-              <div className="flex items-start space-x-4">
-                <span className="flex items-center justify-center w-16 bg-blue-100 rounded-full h-14">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 180 164"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1.46446 70.5355L63.4645 8.53553C66.6143 5.38571 72 7.61654 72 12.0711V86.9787C72 88.2753 71.4964 89.5211 70.5953 90.4534L8.59534 154.606C5.47105 157.839 0 155.627 0 151.132V74.0711C0 72.745 0.526783 71.4732 1.46446 70.5355Z"
-                      fill="#718BFF"
-                    />
-                    <path
-                      d="M109.464 70.5355L171.464 8.53553C174.614 5.38571 180 7.61654 180 12.0711V86.9787C180 88.2753 179.496 89.5211 178.595 90.4534L116.595 154.606C113.471 157.839 108 155.627 108 151.132V74.0711C108 72.745 108.527 71.4732 109.464 70.5355Z"
-                      fill="#060C27"
-                    />
-                    <path
-                      d="M105.929 72H12.4527C8.015 72 5.77663 66.6491 8.89253 63.4893L70.0314 1.48928C70.971 0.53643 72.2534 0 73.5916 0H167.929C172.383 0 174.614 5.3857 171.464 8.53552L109.464 70.5355C108.527 71.4732 107.255 72 105.929 72Z"
-                      fill="#00146B"
-                    />
-                  </svg>
-                </span>
-                <div className="flex flex-col items-start space-y-2">
-                  <CardTitle>Product Management</CardTitle>
-                  <CardDescription>
-                    Enter your credentials to access your account.
-                  </CardDescription>
-                </div>
+              <img
+                className="object-cover w-20 h-20 mt-12 mb-28"
+                src="/assets/imgs/ncf-colored.png"
+                alt="NCF Logo"
+              />
+              <div className="flex flex-col items-center mx-auto space-y-2">
+                <CardTitle className="text-4xl font-black text-primary">
+                  Welcome Back!
+                </CardTitle>
+                <CardDescription>
+                  Sign in to your account to continue
+                </CardDescription>
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
+                  <TextField
                     id="email"
-                    type="email"
-                    placeholder="m@example.com"
                     value={data.email}
                     onChange={(e) => setData("email", e.target.value)}
                     disabled={processing}
+                    label="Email"
+                    variant="filled"
                   />
                   {errors.email && (
                     <p className="text-sm text-red-500">{errors.email}</p>
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
                   <div className="relative">
-                    <Input
+                    <TextField
                       id="password"
-                      type={viewPassword ? "text" : "password"}
+                      label="Password"
+                      className="w-full"
                       placeholder="••••••••"
                       value={data.password}
                       onChange={(e) => setData("password", e.target.value)}
                       disabled={processing}
+                      type={viewPassword ? "text" : "password"}
+                      variant="filled"
                     />
                     {viewPassword ? (
                       <Button
@@ -144,21 +129,37 @@ export default function Login() {
               </div>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-              <Button type="submit" className="w-full" disabled={processing}>
+              <Button
+                type="submit"
+                className="w-full rounded-full"
+                disabled={processing}
+              >
                 {processing ? "Logging in..." : "Login"}
               </Button>
-              <small>
-                Don&apos;t have an account?{" "}
-                <a
-                  href={route("auth.register")}
-                  className="font-semibold underline"
+              <span className="relative w-full py-3">
+                <span className="absolute px-2 -translate-x-1/2 -translate-y-1/2 bg-white top-1/2 left-1/2">
+                  or
+                </span>
+                <hr />
+              </span>
+              <div className="relative w-full">
+                <img
+                  className="absolute w-5 -translate-y-1/2 left-4 top-1/2"
+                  src="/assets/svgs/google.svg"
+                  alt="Google Logo"
+                />
+                <Button
+                  type="button"
+                  className="w-full rounded-full bg-slate-900"
+                  disabled={processing}
                 >
-                  Register
-                </a>
-              </small>
+                  Login using Google GBOX
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         </form>
+        {/* Image here... */}
       </GuestLayout>
     </GuestRoute>
   );

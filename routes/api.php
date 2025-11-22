@@ -19,7 +19,6 @@ Route::prefix('v1')->group(function () {
     Route::middleware('guest')->group(function () {
         // Authentication routes
         Route::post('/auth/login',      [AuthController::class, 'login'])->name('api.auth.login');
-        Route::post('/auth/register',   [AuthController::class, 'register'])->name('api.auth.register');
     });
 
     Route::middleware('auth:api')->group(function () {
@@ -30,9 +29,5 @@ Route::prefix('v1')->group(function () {
 
         // Product routes
         Route::get('/products',         [ProductController::class, 'list'])->name('api.product');
-        Route::post('/products',        [ProductController::class, 'store'])->name('api.product.store');
-        Route::get('/products/{id}',    [ProductController::class, 'find'])->name('api.product.find');
-        Route::put('/products/{id}',    [ProductController::class, 'update'])->name('api.product.update');
-        Route::delete('/products/{id}', [ProductController::class, 'delete'])->name('api.product.delete');
     });
 });
