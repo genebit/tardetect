@@ -48,6 +48,9 @@ npm install
 
 # Run database migrations
 php artisan migrate
+
+# Publish to vendor
+php artisan log-viewer:publish
 ```
 
 #### Running the Application Localy
