@@ -5,84 +5,75 @@ namespace App\Http\Controllers\Auth;
 use App\DTOs\OperationResultDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
-use App\Models\User;
+use App\Services\AuthServices;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Contracts\User;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request): JsonResponse
+    private $authServices;
+
+    public function __construct(AuthServices $authServices)
     {
-        try {
-            $user = User::create([
-                'name'      => $request->name,
-                'email'     => $request->email,
-                'password'  => Hash::make($request->password)
-            ]);
-
-            $token = Auth::login($user);
-
-            return response()->json(new OperationResultDTO(
-                true,
-                "User {$request->email} has been successfully registered.",
-                null,
-                $this->respondWithToken($token)
-            ), 201);
-        } catch (Exception $e) {
-            return response()->json(new OperationResultDTO(
-                false,
-                'Registration failed: ' . $e->getMessage(),
-                null
-            ), 500);
-        }
+        $this->authServices = $authServices;
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
-        try {
-            $credentials = $request->only('email', 'password');
+        $result = $this->authServices->signIn($request->only('email', 'password'));
+        return response()->json($result->toArray());
+    }
 
-            if (! $token = Auth::attempt($credentials)) {
-                throw new Exception('Invalid credentials', 401);
+    public function authorizeClient(User $client) : bool
+    {
+        // Check first if the user's email domain matches the allowed domain
+        $allowedDomain = config('services.google.hd');
+
+        // Verify the user to tardetect's database
+
+        // If it does not exist, register the valid user
+
+        // If all checks pass, return true
+        return false;
+    }
+
+    public function redirectToGoogle(): RedirectResponse
+    {
+        return Socialite::driver('google')
+            ->with(['hd' => config('services.google.hd')])
+            ->redirect();
+    }
+
+    public function redirectToGoogleCallback(): JsonResponse|RedirectResponse
+    {
+        try {
+            $client = Socialite::driver('google')->user();
+
+            // Returns a redirect response back to login with errors
+            if (
+                $client->user &&
+                $this->authorizeClient($client)
+            ) {
+                return redirect()->route('dashboard');
             }
 
-            return response()->json(new OperationResultDTO(
-                true,
-                'Login successful.',
-                null,
-                $this->respondWithToken($token)
-            ), 200);
+            throw new Exception('Failed to sign in with Google.');
         } catch (Exception $e) {
-            return response()->json(new OperationResultDTO(
-                false,
-                'Login failed: ' . $e->getMessage(),
-                null
-            ), $e->getCode() ?: 500);
+            $result = $this->logout();
+
+            return redirect()->route('auth.login')
+                ->withErrors(['error' => 'Authentication failed: ' . $result->content()]);
         }
     }
 
     public function me(): JsonResponse
     {
-        try {
-            $user = Auth::user();
-
-            return response()->json(new OperationResultDTO(
-                true,
-                'User retrieved successfully.',
-                null,
-                $user
-            ), 200);
-        } catch (Exception $e) {
-            return response()->json(new OperationResultDTO(
-                false,
-                'Failed to retrieve user: ' . $e->getMessage(),
-                null
-            ), 500);
-        }
+        $result = $this->authServices->mySession();
+        return response()->json($result->toArray());
     }
 
     public function logout(): JsonResponse
@@ -106,15 +97,8 @@ class AuthController extends Controller
 
     public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(Auth::refresh());
-    }
-
-    protected function respondWithToken($token): JsonResponse
-    {
-        return response()->json([
-            'access_token'  => $token,
-            'token_type'    => 'bearer',
-            'expires_in'    => Auth::factory()->getTTL() * 60
-        ]);
+        return response()->json(
+            $this->authServices->respondWithToken(Auth::refresh())
+        );
     }
 }

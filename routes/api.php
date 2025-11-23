@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Product\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,16 +17,18 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     Route::middleware('guest')->group(function () {
         // Authentication routes
-        Route::post('/auth/login',      [AuthController::class, 'login'])->name('api.auth.login');
+        Route::post('/auth/login',           [AuthController::class, 'login'])->name('api.auth.login');
+
+        Route::middleware('web')->group(function () {
+            Route::get('/auth/google',           [AuthController::class,'redirectToGoogle'])->name('api.auth.google');
+            Route::get('/auth/google/callback',  [AuthController::class,'redirectToGoogleCallback'])->name('api.auth.google.callback');
+        });
     });
 
     Route::middleware('auth:api')->group(function () {
         // Authentication routes
-        Route::get('/users/me',         [AuthController::class, 'me'])->name('api.auth.me');
-        Route::post('/auth/logout',     [AuthController::class, 'logout'])->name('api.auth.logout');
-        Route::post('/auth/refresh',    [AuthController::class, 'refresh'])->name('api.auth.refresh');
-
-        // Product routes
-        Route::get('/products',         [ProductController::class, 'list'])->name('api.product');
+        Route::get('/user/me',              [AuthController::class, 'me'])->name('api.auth.me');
+        Route::post('/auth/logout',         [AuthController::class, 'logout'])->name('api.auth.logout');
+        Route::post('/auth/refresh',        [AuthController::class, 'refresh'])->name('api.auth.refresh');
     });
 });

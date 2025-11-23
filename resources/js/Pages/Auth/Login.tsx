@@ -1,4 +1,4 @@
-import { Head, router, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import GuestRoute from "@/Routes/GuestRoute";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import axios from "axios";
-import { useState } from "react";
-import { Eye, EyeClosed } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Eye, EyeClosed, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import TextField from "@mui/material/TextField";
 
@@ -26,6 +24,7 @@ export default function Login() {
 
   const [viewPassword, setViewPassword] = useState(false);
   const { data, setData, processing, errors, setError } = useForm(formData);
+  const { errors: serverErrors } = usePage().props;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,11 +32,11 @@ export default function Login() {
     try {
       const res = await axios.post(route("api.auth.login"), data);
 
-      const token = res.data.info.original.access_token;
+      const token = res.data.info.access_token;
       localStorage.setItem("auth_token", token);
 
       // Redirect on success
-      router.visit(route("product"));
+      router.visit(route("dashboard"));
     } catch (error: any) {
       if (error.response && error.response.status === 422) {
         toast("Invalid credentials were sent.", {
@@ -50,6 +49,15 @@ export default function Login() {
       }
     }
   };
+
+  useEffect(() => {
+    if (serverErrors) {
+      toast("Authentication failed.", {
+        description:
+          "A server error occurred during authentication. Please try again.",
+      });
+    }
+  }, []);
 
   return (
     <GuestRoute>
@@ -74,6 +82,19 @@ export default function Login() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-6">
+                {serverErrors.error && (
+                  <Card className="border border-red-200 shadow-none bg-red-50">
+                    <CardContent className="flex p-3">
+                      <div className="flex items-center justify-center w-20 h-12 mr-4 text-red-600 bg-red-100 rounded-sm">
+                        <ShieldAlert />
+                      </div>
+                      <p className="mb-0 text-sm text-red-500">
+                        A server error occurred during authentication. Please
+                        try again.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
                 <div className="grid gap-2">
                   <TextField
                     id="email"
@@ -148,18 +169,18 @@ export default function Login() {
                   src="/assets/svgs/google.svg"
                   alt="Google Logo"
                 />
-                <Button
-                  type="button"
-                  className="w-full rounded-full bg-slate-900"
-                  disabled={processing}
-                >
-                  Login using Google GBOX
+                <Button asChild className="rounded-full">
+                  <a
+                    href={route("api.auth.google")}
+                    className="w-full rounded-full bg-slate-900"
+                  >
+                    Login using Google GBOX
+                  </a>
                 </Button>
               </div>
             </CardFooter>
           </Card>
         </form>
-        {/* Image here... */}
       </GuestLayout>
     </GuestRoute>
   );

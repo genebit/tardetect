@@ -76,9 +76,7 @@ export default function Authenticated({ children }: AuthenticatedProps) {
                   </svg>
                 </span>
                 <div>
-                  <h6 className="text-sm font-extrabold">
-                    Product <br /> Management
-                  </h6>
+                  <h6 className="text-sm font-extrabold">Dashboard</h6>
                 </div>
               </header>
             </SidebarMenuItem>
@@ -143,7 +141,7 @@ export default function Authenticated({ children }: AuthenticatedProps) {
               className="transition-colors hover:text-foreground"
               href="#"
             >
-              Management
+              Home
             </a>
           </li>
           <li
@@ -178,7 +176,7 @@ export default function Authenticated({ children }: AuthenticatedProps) {
               aria-current="page"
               className="font-normal text-foreground"
             >
-              My Products
+              Dashboard
             </span>
           </li>
         </ol>
