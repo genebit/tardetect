@@ -13,7 +13,7 @@ export default function GuestRoute({ children }: GuestRouteProps) {
   useEffect(() => {
     if (!loading && user) {
       // If user is logged in, redirect to dashboard (or any protected page)
-      router.visit(route("product"));
+      router.visit(route("dashboard"));
     }
   }, [loading, user]);
 
