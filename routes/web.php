@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +16,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/',                 [LoginController::class, 'index'])->name('home');
-Route::get('/auth/login',       [LoginController::class, 'index'])->name('auth.login');
-Route::get('/dashboard',        [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware('guest')->group(function () {
+    Route::get("/", [LoginController::class, 'index'])->name("auth.login");
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+require __DIR__.'/auth.php';

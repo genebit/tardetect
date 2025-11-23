@@ -1,6 +1,6 @@
 # Laravel 10 with React (Inertia.js) Template
 
-**A project template built using Laravel 10 with React Inertia.js Stack and JWT Authentication**  
+**A project template built using Laravel 10 with React Inertia.js Stack**  
 **Developed by:** _Johcel Gene T. Bitara_
 
 ---
@@ -38,10 +38,6 @@ Collapse to view.
 composer install
 
 copy .env.example .env
-
-# Generate JWT secret
-php artisan key:generate
-php artisan jwt:secret
 
 # Install JS dependencies
 npm install

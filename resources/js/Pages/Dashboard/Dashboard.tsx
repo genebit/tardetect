@@ -1,32 +1,26 @@
-import PrivateRoute from "@/Routes/PrivateRoute";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import { Card, CardContent } from "@/components/ui/card";
+import { PageProps } from "@/types";
 
-function DashboardContent() {
+export default function Dashboard({ auth }: PageProps) {
   return (
-    <Card className="shadow-none shadow-slate-200">
-      <CardContent className="p-5">
-        <header className="flex justify-between mb-3">
-          <div>
-            <h1 className="mb-2 text-xl font-extrabold">TarDetect</h1>
-            <p className="text-base text-muted-foreground">
-              Manage your Dashboard by selecting the option icon under each row.
-            </p>
-          </div>
-        </header>
-      </CardContent>
-    </Card>
-  );
-}
-
-export default function Dashboard() {
-  return (
-    <PrivateRoute>
+    <AuthenticatedLayout
+      user={auth.user}
+      header={
+        <h2 className="text-xl font-semibold leading-tight text-gray-800">
+          Dashboard
+        </h2>
+      }
+    >
       <Head title="Dashboard" />
-      <AuthenticatedLayout>
-        <DashboardContent />
-      </AuthenticatedLayout>
-    </PrivateRoute>
+
+      <div className="py-12">
+        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+            <div className="p-6 text-gray-900">You're logged in!</div>
+          </div>
+        </div>
+      </div>
+    </AuthenticatedLayout>
   );
 }
