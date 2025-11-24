@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\v1\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\v1\GoogleSessionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,21 +15,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('v1')->group(function () {
-    Route::middleware('guest')->group(function () {
-        // Authentication routes
-        Route::post('/auth/login',           [AuthController::class, 'login'])->name('api.auth.login');
 
-        Route::middleware('web')->group(function () {
-            Route::get('/auth/google',           [AuthController::class,'redirectToGoogle'])->name('api.auth.google');
-            Route::get('/auth/google/callback',  [AuthController::class,'redirectToGoogleCallback'])->name('api.auth.google.callback');
-        });
+Route::middleware('web')->prefix('v1')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::post('/auth/login',          [AuthenticatedSessionController::class, 'store'])->name('api.auth.login');
+        Route::get('/auth/google',          [GoogleSessionController::class,'index'])->name('api.auth.google');
+        Route::get('/auth/google/callback', [GoogleSessionController::class,'create'])->name('api.auth.google.callback');
     });
 
-    Route::middleware('auth:api')->group(function () {
-        // Authentication routes
-        Route::get('/user/me',              [AuthController::class, 'me'])->name('api.auth.me');
-        Route::post('/auth/logout',         [AuthController::class, 'logout'])->name('api.auth.logout');
-        Route::post('/auth/refresh',        [AuthController::class, 'refresh'])->name('api.auth.refresh');
+    Route::middleware('auth')->group(function () {
+        Route::post('/auth/logout',         [AuthenticatedSessionController::class, 'destroy'])->name('api.auth.logout');
     });
 });
+
