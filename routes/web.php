@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Auth\v1\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\v1\GoogleSessionController;
+use App\Http\Controllers\Api\Auth\v1\AuthenticatedSessionController;
+use App\Http\Controllers\Api\Auth\v1\GoogleSessionController;
 use App\Http\Controllers\Web\Auth\LoginController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
+use App\Http\Controllers\Web\Kiosk\KioskController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,10 +19,12 @@ use Inertia\Inertia;
 |
 */
 
+Route::get("/kiosk", [KioskController::class, 'index'])->name("");
+
 Route::middleware('guest')->group(function () {
     Route::get("/", [LoginController::class, 'index'])->name("auth.login");
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });

@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\v1\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\v1\GoogleSessionController;
+use App\Http\Controllers\Api\Auth\v1\AuthenticatedSessionController;
+use App\Http\Controllers\Api\Auth\v1\GoogleSessionController;
+use App\Http\Controllers\Api\Kiosk\v1\KioskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,4 +26,6 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::post('/auth/logout', [AuthenticatedSessionController::class, 'destroy'])->name('api.auth.logout');
     });
+
+    Route::get('/kiosk/datetime', [KioskController::class, 'datetime'])->name('api.kiosk.datetime');
 });

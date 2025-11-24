@@ -20,7 +20,7 @@ export default function Guest({ children }: PropsWithChildren) {
         <h1 className="font-black tracking-wide uppercase text-8xl text-primary">
           TarDetect
         </h1>
-        <h4 className="text-xl font-extrabold uppercase">
+        <h4 className="text-xl font-medium uppercase">
           Naga College Foundation, Inc.
         </h4>
       </header>
