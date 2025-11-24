@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\v1\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\v1\GoogleSessionController;
 use App\Http\Controllers\Web\Auth\LoginController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +22,6 @@ Route::middleware('guest')->group(function () {
     Route::get("/", [LoginController::class, 'index'])->name("auth.login");
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });

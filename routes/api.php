@@ -15,16 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::middleware('web')->prefix('v1')->group(function () {
+Route::prefix('v1')->group(function () {
     Route::middleware('guest')->group(function () {
-        Route::post('/auth/login',          [AuthenticatedSessionController::class, 'store'])->name('api.auth.login');
-        Route::get('/auth/google',          [GoogleSessionController::class,'index'])->name('api.auth.google');
-        Route::get('/auth/google/callback', [GoogleSessionController::class,'create'])->name('api.auth.google.callback');
+        Route::post('/auth/login', [AuthenticatedSessionController::class, 'store'])->name('api.auth.login');
+        Route::get('/auth/google', [GoogleSessionController::class, 'index'])->name('api.auth.google');
+        Route::get('/auth/google/callback', [GoogleSessionController::class, 'create'])->name('api.auth.google.callback');
     });
 
     Route::middleware('auth')->group(function () {
-        Route::post('/auth/logout',         [AuthenticatedSessionController::class, 'destroy'])->name('api.auth.logout');
+        Route::post('/auth/logout', [AuthenticatedSessionController::class, 'destroy'])->name('api.auth.logout');
     });
 });
-

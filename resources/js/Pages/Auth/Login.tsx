@@ -1,6 +1,6 @@
 import { useEffect, FormEventHandler, useState } from "react";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,7 +25,7 @@ export default function Login({
     password: "",
     remember: false,
   });
-
+  const { errors: serverErrors } = usePage().props;
   const [viewPassword, setViewPassword] = useState(false);
 
   useEffect(() => {
@@ -62,6 +62,17 @@ export default function Login({
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-6">
+              {serverErrors.error && (
+                <div
+                  className="flex items-center p-4 text-sm text-red-700 bg-red-100 border border-red-300 border-solid rounded-lg"
+                  role="alert"
+                >
+                  <div className="flex items-center justify-center h-12 mr-3 bg-red-200 rounded-md w-14">
+                    <ShieldAlert className="w-5 h-5" />
+                  </div>
+                  <span>{serverErrors.error}</span>
+                </div>
+              )}
               <div className="grid gap-2">
                 <TextField
                   id="email"
