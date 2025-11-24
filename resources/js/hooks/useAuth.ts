@@ -33,6 +33,7 @@ export default function useAuth() {
     const fetchUser = async () => {
       try {
         const res = await axios.get(route("api.auth.me"));
+
         setUser(res.data.info);
       } catch (error) {
         console.error("Auth check failed:", error);

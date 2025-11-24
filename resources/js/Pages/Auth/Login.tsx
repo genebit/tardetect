@@ -1,6 +1,6 @@
-import { Head, router, useForm } from "@inertiajs/react";
-import GuestRoute from "@/Routes/GuestRoute";
+import { useEffect, FormEventHandler, useState } from "react";
 import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,157 +10,155 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import axios from "axios";
-import { useState } from "react";
-import { Eye, EyeClosed } from "lucide-react";
-import { toast } from "sonner";
+import { ShieldAlert, Eye, EyeClosed } from "lucide-react";
 import TextField from "@mui/material/TextField";
 
-export default function Login() {
-  const formData = {
+export default function Login({
+  status,
+  canResetPassword,
+}: {
+  status?: string;
+  canResetPassword: boolean;
+}) {
+  const { data, setData, post, processing, errors, reset } = useForm({
     email: "",
     password: "",
-  };
-
+    remember: false,
+  });
+  const { errors: serverErrors } = usePage().props;
   const [viewPassword, setViewPassword] = useState(false);
-  const { data, setData, processing, errors, setError } = useForm(formData);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    return () => {
+      reset("password");
+    };
+  }, []);
+
+  const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    try {
-      const res = await axios.post(route("api.auth.login"), data);
-
-      const token = res.data.info.original.access_token;
-      localStorage.setItem("auth_token", token);
-
-      // Redirect on success
-      router.visit(route("product"));
-    } catch (error: any) {
-      if (error.response && error.response.status === 422) {
-        toast("Invalid credentials were sent.", {
-          description: "Please fill in all the required fields in the form.",
-        });
-        setError(error.response.data.errors);
-      } else {
-        toast(error.response.data.message);
-        setError(formData);
-      }
-    }
+    post(route("api.auth.login"));
   };
 
   return (
-    <GuestRoute>
-      <GuestLayout>
-        <Head title="Login" />
-        <form onSubmit={handleSubmit}>
-          <Card className="z-10 h-screen max-w-xl px-20 rounded-tl-none rounded-bl-none shadow-2xl rounded-tr-3xl rounded-br-3xl dark:shadow-black">
-            <CardHeader>
-              <img
-                className="object-cover w-20 h-20 mt-12 mb-28"
-                src="/assets/imgs/ncf-colored.png"
-                alt="NCF Logo"
-              />
-              <div className="flex flex-col items-center mx-auto space-y-2">
-                <CardTitle className="text-4xl font-black text-primary">
-                  Welcome Back!
-                </CardTitle>
-                <CardDescription>
-                  Sign in to your account to continue
-                </CardDescription>
+    <GuestLayout>
+      <Head title="Login" />
+      <form onSubmit={submit}>
+        <Card className="z-10 h-screen max-w-xl px-20 bg-white rounded-tl-none rounded-bl-none shadow-2xl rounded-tr-3xl rounded-br-3xl overflow-clip">
+          <CardHeader>
+            <img
+              className="object-cover w-20 h-20 mt-12 mb-28"
+              src="/assets/imgs/ncf-colored.png"
+              alt="NCF Logo"
+            />
+            <div className="flex flex-col items-center mx-auto space-y-2">
+              <CardTitle className="text-4xl font-black text-primary">
+                Welcome Back!
+              </CardTitle>
+              <CardDescription>
+                Sign in to your account to continue
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-6">
+              {serverErrors.error && (
+                <div
+                  className="flex items-center p-4 text-sm text-red-700 bg-red-100 border border-red-300 border-solid rounded-lg"
+                  role="alert"
+                >
+                  <div className="flex items-center justify-center h-12 mr-3 bg-red-200 rounded-md w-14">
+                    <ShieldAlert className="w-5 h-5" />
+                  </div>
+                  <span>{serverErrors.error}</span>
+                </div>
+              )}
+              <div className="grid gap-2">
+                <TextField
+                  id="email"
+                  value={data.email}
+                  onChange={(e) => setData("email", e.target.value)}
+                  disabled={processing}
+                  label="Email"
+                  variant="filled"
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email}</p>
+                )}
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
+              <div className="grid gap-2">
+                <div className="relative">
                   <TextField
-                    id="email"
-                    value={data.email}
-                    onChange={(e) => setData("email", e.target.value)}
+                    id="password"
+                    label="Password"
+                    className="w-full"
+                    placeholder="••••••••"
+                    value={data.password}
+                    onChange={(e) => setData("password", e.target.value)}
                     disabled={processing}
-                    label="Email"
+                    type={viewPassword ? "text" : "password"}
                     variant="filled"
                   />
-                  {errors.email && (
-                    <p className="text-sm text-red-500">{errors.email}</p>
+                  {viewPassword ? (
+                    <Button
+                      type="button"
+                      size={"icon"}
+                      variant={"ghost"}
+                      onClick={() => setViewPassword(false)}
+                      className="absolute -translate-y-1/2 hover:bg-transparent right-2 top-1/2"
+                    >
+                      <Eye />
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      size={"icon"}
+                      variant={"ghost"}
+                      onClick={() => setViewPassword(true)}
+                      className="absolute -translate-y-1/2 hover:bg-transparent right-2 top-1/2"
+                    >
+                      <EyeClosed />
+                    </Button>
                   )}
                 </div>
-                <div className="grid gap-2">
-                  <div className="relative">
-                    <TextField
-                      id="password"
-                      label="Password"
-                      className="w-full"
-                      placeholder="••••••••"
-                      value={data.password}
-                      onChange={(e) => setData("password", e.target.value)}
-                      disabled={processing}
-                      type={viewPassword ? "text" : "password"}
-                      variant="filled"
-                    />
-                    {viewPassword ? (
-                      <Button
-                        type="button"
-                        size={"icon"}
-                        variant={"ghost"}
-                        onClick={() => setViewPassword(false)}
-                        className="absolute -translate-y-1/2 hover:bg-transparent right-2 top-1/2"
-                      >
-                        <Eye />
-                      </Button>
-                    ) : (
-                      <Button
-                        type="button"
-                        size={"icon"}
-                        variant={"ghost"}
-                        onClick={() => setViewPassword(true)}
-                        className="absolute -translate-y-1/2 hover:bg-transparent right-2 top-1/2"
-                      >
-                        <EyeClosed />
-                      </Button>
-                    )}
-                  </div>
-                  {errors.password && (
-                    <p className="text-sm text-red-500">{errors.password}</p>
-                  )}
-                </div>
+                {errors.password && (
+                  <p className="text-sm text-red-500">{errors.password}</p>
+                )}
               </div>
-            </CardContent>
-            <CardFooter className="flex-col gap-2">
-              <Button
-                type="submit"
-                className="w-full rounded-full"
-                disabled={processing}
-              >
-                {processing ? "Logging in..." : "Login"}
-              </Button>
-              <span className="relative w-full py-3">
-                <span className="absolute px-2 -translate-x-1/2 -translate-y-1/2 bg-white top-1/2 left-1/2">
-                  or
-                </span>
-                <hr />
+            </div>
+          </CardContent>
+          <CardFooter className="flex-col gap-2">
+            <Button
+              type="submit"
+              className="w-full rounded-full"
+              disabled={processing}
+            >
+              {processing ? "Logging in..." : "Login"}
+            </Button>
+            <span className="relative w-full py-3">
+              <span className="absolute px-2 -translate-x-1/2 -translate-y-1/2 bg-white top-1/2 left-1/2">
+                or
               </span>
-              <div className="relative w-full">
-                <img
-                  className="absolute w-5 -translate-y-1/2 left-4 top-1/2"
-                  src="/assets/svgs/google.svg"
-                  alt="Google Logo"
-                />
-                <Button
-                  type="button"
+              <hr />
+            </span>
+            <div className="relative w-full">
+              <img
+                className="absolute w-5 -translate-y-1/2 left-4 top-1/2"
+                src="/assets/svgs/google.svg"
+                alt="Google Logo"
+              />
+              <Button asChild className="rounded-full">
+                <a
+                  href={route("api.auth.google")}
                   className="w-full rounded-full bg-slate-900"
-                  disabled={processing}
                 >
                   Login using Google GBOX
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
-        </form>
-        {/* Image here... */}
-      </GuestLayout>
-    </GuestRoute>
+                </a>
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
+      </form>
+    </GuestLayout>
   );
 }

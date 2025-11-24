@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Auth\v1\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\v1\GoogleSessionController;
+use App\Http\Controllers\Web\Auth\LoginController;
+use App\Http\Controllers\Web\Dashboard\DashboardController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +18,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/',                 [LoginController::class, 'index'])->name('home');
-Route::get('/auth/login',       [LoginController::class, 'index'])->name('auth.login');
-Route::get('/dashboard',        [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware('guest')->group(function () {
+    Route::get("/", [LoginController::class, 'index'])->name("auth.login");
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});

@@ -29,7 +29,7 @@ export default function Preloader() {
           ? "opacity-100 z-50"
           : !hidePreloader
           ? "animate__fadeOut z-40"
-          : "z-0 opacity-0"
+          : "z-0 hidden"
       }`}
     >
       <span className="preloader"></span>
