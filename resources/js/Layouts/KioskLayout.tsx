@@ -1,5 +1,8 @@
+import { Button } from "@/components/ui/button";
 import Preloader from "@/components/ui/preloader";
 import { Toaster } from "@/components/ui/sonner";
+import Scanner from "@/Pages/Kiosk/components/Scanner";
+import { Info, TriangleAlert } from "lucide-react";
 import { PropsWithChildren } from "react";
 
 export default function Guest({ children }: PropsWithChildren) {
@@ -7,6 +10,7 @@ export default function Guest({ children }: PropsWithChildren) {
     <div className="relative flex flex-col items-center justify-center w-full m-0 bg-neutral-50">
       <Preloader />
       <Toaster position="top-right" />
+      <Scanner />
       <div className="absolute top-0 z-20 w-screen h-screen px-20 py-16">
         <div className="relative w-full h-full py-12 border border-solid shadow-2xl border-neutral-300 rounded-3xl filter backdrop-blur-sm">
           {children}
