@@ -9,7 +9,7 @@ export default function Dashboard({ auth }: PageProps) {
   return (
     <AuthenticatedLayout user={auth.user}>
       <Head title="Dashboard" />
-      <header className="flex flex-col gap-3 mx-auto mb-3 max-w-7xl">
+      <header className="flex flex-col gap-3 mx-auto mb-3">
         <Card className="relative shadow-none overflow-clip">
           <CardContent className="flex flex-col gap-3 p-4">
             <h1 className="z-10 text-2xl font-black">
