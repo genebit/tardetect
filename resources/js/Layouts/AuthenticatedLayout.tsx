@@ -13,7 +13,9 @@ export default function Authenticated({
       <Preloader />
       <div className="flex flex-row min-h-screen">
         <aside className="w-1/4 min-h-screen p-12 bg-gray-100"></aside>
-        <main className="w-full p-12">{children}</main>
+        <main className="w-full p-12">
+          <div className="container">{children}</div>
+        </main>
       </div>
     </React.Fragment>
   );
